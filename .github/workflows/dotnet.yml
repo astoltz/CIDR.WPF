@@ -1,0 +1,49 @@
+﻿name: CIDR.WPF
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  PACKAGE_VERSION: '1.0.0'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore the application
+        run: dotnet restore --runtime win-x64
+        working-directory: CIDR.WPF
+
+      - name: Build the application
+        run: dotnet build --configuration $env:Configuration --no-restore
+        working-directory: CIDR.WPF
+        env:
+          Configuration: ${{ matrix.configuration }}
+
+      - name: Publish the application
+        run: dotnet publish --configuration $env:Configuration --self-contained true --no-restore /p:PublishSingleFile=true
+        working-directory: CIDR.WPF
+        env:
+          Configuration: ${{ matrix.configuration }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: CIDR.WPF-${{ matrix.configuration }}
+          path: CIDR.WPF/bin/${{ matrix.configuration }}/net10.0-windows/win-x64/publish/

@@ -1,0 +1,38 @@
+﻿<Window x:Class="CIDR.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CIDR.WPF"
+        mc:Ignorable="d"
+        Title="CIDR Processor" Height="600" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+            <Button x:Name="BtnCloudflare" Content="Fetch Cloudflare IPs" Click="BtnCloudflare_Click" Padding="10,5" Margin="0,0,10,0"/>
+            <TextBlock Text="Output Format:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+            <ComboBox x:Name="CmbFormat" SelectedIndex="0" Width="150" VerticalContentAlignment="Center" SelectionChanged="CmbFormat_SelectionChanged">
+                <ComboBoxItem Content="One per line"/>
+                <ComboBoxItem Content="Space separated"/>
+                <ComboBoxItem Content="F5 (network cidr,)"/>
+            </ComboBox>
+            <Button x:Name="BtnProcess" Content="Process &amp; Sort" Click="BtnProcess_Click" Padding="10,5" Margin="10,0,0,0"/>
+        </StackPanel>
+
+        <GroupBox Header="Input" Grid.Row="1">
+            <TextBox x:Name="TxtInput" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontFamily="Consolas"/>
+        </GroupBox>
+
+        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
+
+        <GroupBox Header="Output" Grid.Row="3">
+            <TextBox x:Name="TxtOutput" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontFamily="Consolas" IsReadOnly="True"/>
+        </GroupBox>
+    </Grid>
+</Window>
