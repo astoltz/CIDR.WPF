@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -18,6 +19,37 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Loaded += MainWindow_Loaded;
+    }
+
+    private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+    {
+        // If text was set before the window was loaded (e.g. via command line args),
+        // ensure we process it now that the UI is ready.
+        if (!string.IsNullOrWhiteSpace(TxtInput.Text))
+        {
+            ProcessAndSort();
+        }
+    }
+
+    public void LoadFile(string filePath)
+    {
+        try
+        {
+            var content = File.ReadAllText(filePath);
+            TxtInput.Text = content;
+            
+            // If the window is already loaded, process immediately.
+            // If not, the Loaded event will handle it.
+            if (IsLoaded)
+            {
+                ProcessAndSort();
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error reading file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private async void BtnCloudflare_Click(object sender, RoutedEventArgs e)
@@ -61,6 +93,33 @@ public partial class MainWindow : Window
     {
         if (IsLoaded)
             ProcessAndSort();
+    }
+
+    private void Window_Drop(object sender, DragEventArgs e)
+    {
+        HandleDrop(e);
+    }
+
+    private void TxtInput_PreviewDragOver(object sender, DragEventArgs e)
+    {
+        e.Handled = true;
+    }
+
+    private void TxtInput_Drop(object sender, DragEventArgs e)
+    {
+        HandleDrop(e);
+    }
+
+    private void HandleDrop(DragEventArgs e)
+    {
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files != null && files.Length > 0)
+            {
+                LoadFile(files[0]);
+            }
+        }
     }
 
     private void ProcessAndSort()

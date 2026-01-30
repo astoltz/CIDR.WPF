@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CIDR.WPF"
         mc:Ignorable="d"
-        Title="CIDR Processor" Height="600" Width="800">
+        Title="CIDR Processor" Height="600" Width="800"
+        AllowDrop="True" Drop="Window_Drop">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -26,7 +27,8 @@
         </StackPanel>
 
         <GroupBox Header="Input" Grid.Row="1">
-            <TextBox x:Name="TxtInput" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontFamily="Consolas"/>
+            <TextBox x:Name="TxtInput" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontFamily="Consolas"
+                     AllowDrop="True" PreviewDragOver="TxtInput_PreviewDragOver" Drop="TxtInput_Drop"/>
         </GroupBox>
 
         <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
