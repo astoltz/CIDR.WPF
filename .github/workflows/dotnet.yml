@@ -44,7 +44,7 @@ jobs:
 
       - name: Build
         run: >
-          dotnet build --configuration Release --runtime win-x64 --no-restore
+          dotnet build --configuration Release --runtime win-x64
           /p:Version=${{ env.VERSION }}
           /p:AssemblyVersion=${{ env.VERSION }}.${{ env.BUILD_NUMBER }}
           /p:FileVersion=${{ env.VERSION }}.${{ env.BUILD_NUMBER }}
@@ -54,7 +54,7 @@ jobs:
 
       - name: Publish
         run: >
-          dotnet publish --configuration Release --runtime win-x64 --self-contained true --no-restore
+          dotnet publish --configuration Release --runtime win-x64 --self-contained true
           /p:PublishSingleFile=true
           /p:Version=${{ env.VERSION }}
           /p:AssemblyVersion=${{ env.VERSION }}.${{ env.BUILD_NUMBER }}
