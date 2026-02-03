@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace CIDR.WPF;
@@ -16,11 +16,11 @@ public partial class AboutWindow : Window
         InitializeComponent();
         DataContext = this;
 
-        TxtVersion.Text   = $"Version:    {BuildInfo.Version}";
-        TxtCommit.Text    = $"Commit:     {BuildInfo.GitCommit}";
-        TxtBranch.Text    = $"Branch/Tag: {BuildInfo.GitBranch}";
+        TxtVersion.Text = $"Version:    {BuildInfo.Version}";
+        TxtCommit.Text = $"Commit:     {BuildInfo.GitCommit}";
+        TxtBranch.Text = $"Branch/Tag: {BuildInfo.GitBranch}";
         TxtBuildDate.Text = $"Built:      {BuildInfo.BuildDate}";
-        TxtRuntime.Text   = $"Runtime:    {RuntimeInformation.FrameworkDescription}";
+        TxtRuntime.Text = $"Runtime:    {RuntimeInformation.FrameworkDescription}";
     }
 
     private void BtnOk_Click(object sender, RoutedEventArgs e)
