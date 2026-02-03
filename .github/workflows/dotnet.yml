@@ -83,9 +83,12 @@ jobs:
           name: CIDR.WPF-Release
           path: artifacts
 
+      - name: Zip release
+        run: zip -j CIDR.WPF-${{ github.ref_name }}-win-x64.zip artifacts/*
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: CIDR.WPF ${{ github.ref_name }}
           generate_release_notes: true
-          files: artifacts/*
+          files: CIDR.WPF-${{ github.ref_name }}-win-x64.zip
