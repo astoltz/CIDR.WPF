@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 
 namespace CIDR.WPF;
 
@@ -15,7 +13,7 @@ public partial class App : Application
         
         if (e.Args.Length > 0 && System.IO.File.Exists(e.Args[0]))
         {
-            mainWindow.LoadFile(e.Args[0]);
+            _ = mainWindow.LoadFileAsync(e.Args[0]);
         }
 
         mainWindow.Show();

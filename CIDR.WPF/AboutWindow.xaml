@@ -1,0 +1,125 @@
+<Window x:Class="CIDR.WPF.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="About CIDR Processor"
+        Width="440" Height="340"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Icon="about.ico"
+        Background="#C0C0C0">
+
+    <!-- 90s Windows raised-panel look -->
+    <Border BorderThickness="2" Margin="4"
+            BorderBrush="#FFFFFF"
+            Background="#C0C0C0">
+        <Border BorderThickness="0,0,2,2" BorderBrush="#808080">
+            <Grid Margin="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header: icon + title -->
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                    <Image Source="app.ico" Width="48" Height="48" Margin="0,0,12,0"
+                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="CIDR Processor"
+                                   FontFamily="MS Sans Serif, Arial"
+                                   FontSize="20" FontWeight="Bold"
+                                   Foreground="#000080"/>
+                        <TextBlock Text="The Totally Rad Subnet Utility"
+                                   FontFamily="MS Sans Serif, Arial"
+                                   FontSize="11" FontStyle="Italic"
+                                   Foreground="#404040"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- 3D sunken separator -->
+                <Border Grid.Row="1" Height="2" Margin="0,4,0,8"
+                        BorderThickness="0,1,0,1"
+                        BorderBrush="#808080"
+                        Background="#FFFFFF"/>
+
+                <!-- Build info panel (sunken inset look) -->
+                <Border Grid.Row="2" Margin="0,0,0,8"
+                        BorderThickness="2"
+                        Padding="10"
+                        Background="#FFFFFF">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                            <GradientStop Color="#808080" Offset="0"/>
+                            <GradientStop Color="#DFDFDF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                    <StackPanel>
+                        <TextBlock x:Name="TxtVersion"
+                                   FontFamily="Consolas, Courier New"
+                                   FontSize="12" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="TxtCommit"
+                                   FontFamily="Consolas, Courier New"
+                                   FontSize="12" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="TxtBranch"
+                                   FontFamily="Consolas, Courier New"
+                                   FontSize="12" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="TxtBuildDate"
+                                   FontFamily="Consolas, Courier New"
+                                   FontSize="12" Margin="0,0,0,4"/>
+                        <TextBlock x:Name="TxtRuntime"
+                                   FontFamily="Consolas, Courier New"
+                                   FontSize="12"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Copyright -->
+                <TextBlock Grid.Row="3"
+                           FontFamily="MS Sans Serif, Arial" FontSize="11"
+                           Foreground="#404040" Margin="0,0,0,10"
+                           HorizontalAlignment="Center"
+                           Text="{Binding CopyrightText}"/>
+
+                <!-- Classic raised OK button -->
+                <Button Grid.Row="4" Content="OK" Width="90" Height="28"
+                        HorizontalAlignment="Center"
+                        IsDefault="True" IsCancel="True"
+                        Click="BtnOk_Click"
+                        FontFamily="MS Sans Serif, Arial"
+                        FontWeight="Bold" FontSize="12">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <!-- Outer raised bevel -->
+                                        <Border BorderThickness="2" Background="#C0C0C0"
+                                                BorderBrush="#FFFFFF">
+                                            <Border BorderThickness="0,0,2,2" BorderBrush="#808080"
+                                                    Padding="4,2">
+                                                <!-- Focus dotted rectangle -->
+                                                <Border x:Name="FocusBorder" BorderThickness="1" BorderBrush="Transparent"
+                                                        Padding="2,0">
+                                                    <ContentPresenter HorizontalAlignment="Center"
+                                                                      VerticalAlignment="Center"/>
+                                                </Border>
+                                            </Border>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsFocused" Value="True">
+                                                <Setter TargetName="FocusBorder" Property="BorderBrush" Value="Black"/>
+                                                <Setter TargetName="FocusBorder" Property="BorderThickness" Value="1"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Grid>
+        </Border>
+    </Border>
+</Window>

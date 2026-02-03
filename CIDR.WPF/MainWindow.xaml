@@ -6,35 +6,251 @@
         xmlns:local="clr-namespace:CIDR.WPF"
         mc:Ignorable="d"
         Title="CIDR Processor" Height="600" Width="800"
+        Icon="app.ico"
+        Background="#C0C0C0"
+        FontFamily="MS Sans Serif, Arial"
         AllowDrop="True" Drop="Window_Drop">
-    <Grid Margin="10">
+
+    <Window.Resources>
+        <!-- ══════════════════════════════════════════════════════════
+             90s Windows raised-button style
+             White highlight on top/left, gray shadow on bottom/right
+             ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="RetroButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="MS Sans Serif, Arial"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Outer" BorderThickness="2" Background="#C0C0C0"
+                                BorderBrush="#FFFFFF">
+                            <Border x:Name="Inner" BorderThickness="0,0,2,2" BorderBrush="#808080"
+                                    Padding="{TemplateBinding Padding}">
+                                <AccessText HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   Text="{TemplateBinding Content}"/>
+                            </Border>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Outer" Property="BorderBrush" Value="#808080"/>
+                                <Setter TargetName="Inner" Property="BorderBrush" Value="#FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="#808080"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Outer" Property="Background" Value="#D4D0C8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Sunken panel style (for text areas and info panels)
+             Dark top/left edge, light bottom/right — inset 3D look
+             ══════════════════════════════════════════════════════════ -->
+        <Style x:Key="SunkenBorder" TargetType="Border">
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="#808080"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════
+             90s GroupBox: bold header on silver, sunken content area
+             ══════════════════════════════════════════════════════════ -->
+        <Style TargetType="GroupBox">
+            <Setter Property="FontFamily" Value="MS Sans Serif, Arial"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#000080"/>
+            <Setter Property="BorderBrush" Value="#808080"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════
+             90s Menu bar styling
+             ══════════════════════════════════════════════════════════ -->
+        <Style TargetType="Menu">
+            <Setter Property="Background" Value="#C0C0C0"/>
+            <Setter Property="FontFamily" Value="MS Sans Serif, Arial"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <!-- ══════════════════════════════════════════════════════════
+             Retro ComboBox: silver face with sunken border
+             ══════════════════════════════════════════════════════════ -->
+        <Style TargetType="ComboBox">
+            <Setter Property="FontFamily" Value="MS Sans Serif, Arial"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+
+        <!-- Label styling -->
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="MS Sans Serif, Arial"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
-            <Button x:Name="BtnCloudflare" Content="Fetch Cloudflare IPs" Click="BtnCloudflare_Click" Padding="10,5" Margin="0,0,10,0"/>
-            <TextBlock Text="Output Format:" VerticalAlignment="Center" Margin="10,0,5,0"/>
-            <ComboBox x:Name="CmbFormat" SelectedIndex="0" Width="150" VerticalContentAlignment="Center" SelectionChanged="CmbFormat_SelectionChanged">
-                <ComboBoxItem Content="One per line"/>
-                <ComboBoxItem Content="Space separated"/>
-                <ComboBoxItem Content="F5 (network cidr,)"/>
-            </ComboBox>
-            <Button x:Name="BtnProcess" Content="Process &amp; Sort" Click="BtnProcess_Click" Padding="10,5" Margin="10,0,0,0"/>
-        </StackPanel>
+        <!-- ── Menu bar ── -->
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open..." Command="ApplicationCommands.Open" InputGestureText="Ctrl+O"
+                          ToolTip="Open a text file containing IP addresses or CIDR subnets"/>
+                <MenuItem Header="_Save Output..." Command="ApplicationCommands.Save" InputGestureText="Ctrl+S"
+                          ToolTip="Save the formatted output to a text file"/>
+                <Separator/>
+                <MenuItem Header="E_xit" Click="MenuExit_Click" InputGestureText="Alt+F4"
+                          ToolTip="Close the application"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About CIDR Processor" Click="MenuAbout_Click"
+                          ToolTip="View version, build, and git information"/>
+            </MenuItem>
+        </Menu>
 
-        <GroupBox Header="Input" Grid.Row="1">
-            <TextBox x:Name="TxtInput" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontFamily="Consolas"
-                     AllowDrop="True" PreviewDragOver="TxtInput_PreviewDragOver" Drop="TxtInput_Drop"/>
+        <!-- ── 3D etched separator under menu ── -->
+        <Border Grid.Row="1" Height="2" Margin="0,0,0,0"
+                BorderThickness="0,1,0,1"
+                BorderBrush="#808080" Background="#FFFFFF"/>
+
+        <!-- ── Toolbar: raised panel with beveled buttons ── -->
+        <Border Grid.Row="2" Margin="4,4,4,0" Padding="6,4"
+                BorderThickness="2" BorderBrush="#FFFFFF" Background="#C0C0C0">
+            <Border BorderThickness="0,0,2,2" BorderBrush="#808080">
+                <StackPanel Orientation="Horizontal" Margin="4,2">
+                    <Button x:Name="BtnCloudflare"
+                            Content="_Import Cloudflare Ranges"
+                            Style="{StaticResource RetroButton}"
+                            Click="BtnCloudflare_Click"
+                            Margin="0,0,8,0"
+                            ToolTip="Retrieve the current list of Cloudflare IP ranges from their public API (Alt+I)"/>
+
+                    <Border Width="2" Margin="4,2" Background="#808080"/>
+
+                    <Label Content="Output For_mat:"
+                           Target="{Binding ElementName=CmbFormat}"
+                           VerticalAlignment="Center" Margin="4,0,4,0"
+                           ToolTip="Select how the processed results are formatted"/>
+                    <ComboBox x:Name="CmbFormat"
+                              SelectedIndex="0" Width="175"
+                              VerticalContentAlignment="Center"
+                              SelectionChanged="CmbFormat_SelectionChanged"
+                              AutomationProperties.Name="Output Format"
+                              ToolTip="Choose the output format for processed CIDR entries">
+                        <ComboBoxItem Content="One Per Line"    ToolTip="Each CIDR entry on its own line"/>
+                        <ComboBoxItem Content="Space-Delimited" ToolTip="All entries separated by spaces on a single line"/>
+                        <ComboBoxItem Content="F5 BigIP Format" ToolTip="Formatted as F5 BigIP network statements: network &lt;cidr&gt;,"/>
+                        <ComboBoxItem Content="Nginx Allow"     ToolTip="Formatted as Nginx allow directives: allow &lt;cidr&gt;;"/>
+                        <ComboBoxItem Content="Apache Require"  ToolTip="Formatted as Apache 2.4 Require directives: Require ip &lt;cidr&gt;"/>
+                    </ComboBox>
+
+                    <Border Width="2" Margin="4,2" Background="#808080"/>
+
+                    <Button x:Name="BtnProcess"
+                            Content="_Process and Sort"
+                            Style="{StaticResource RetroButton}"
+                            Click="BtnProcess_Click"
+                            Margin="4,0,0,0"
+                            ToolTip="Parse all valid IP addresses and CIDR subnets from the input, sort them, and display the formatted output (Alt+P)"/>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- ── Status bar: detection summary ── -->
+        <TextBlock x:Name="TxtStatus" Grid.Row="3" Margin="10,6,10,2"
+                   FontSize="11" FontFamily="MS Sans Serif, Arial"
+                   Foreground="#808080"
+                   AutomationProperties.Name="Detection Status"
+                   Text="Enter or paste IP addresses and CIDR subnets above to begin."/>
+
+        <!-- ── Input panel: sunken inset text area ── -->
+        <GroupBox Header="Input" Grid.Row="4" Margin="8,2,8,0">
+            <Border Style="{StaticResource SunkenBorder}">
+                <Grid>
+                    <RichTextBox x:Name="TxtInput"
+                                 VerticalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas, Courier New"
+                                 FontWeight="Normal"
+                                 FontSize="13"
+                                 AcceptsReturn="True"
+                                 Background="#FFFFFF"
+                                 BorderThickness="0"
+                                 AllowDrop="True"
+                                 PreviewDragOver="TxtInput_PreviewDragOver"
+                                 Drop="TxtInput_Drop"
+                                 AutomationProperties.Name="CIDR Input"
+                                 AutomationProperties.HelpText="Paste or type IP addresses and CIDR subnets here. You may also drag and drop a text file. Recognized entries are highlighted in green; unrecognized text appears in red.">
+                        <RichTextBox.Resources>
+                            <Style TargetType="Paragraph">
+                                <Setter Property="Margin" Value="0"/>
+                            </Style>
+                        </RichTextBox.Resources>
+                    </RichTextBox>
+                    <!-- Watermark shown when input is empty and unfocused -->
+                    <TextBlock x:Name="TxtInputWatermark"
+                               Text="Paste IP addresses or CIDR subnets here, or drag and drop a text file..."
+                               FontFamily="Consolas, Courier New" FontStyle="Italic"
+                               FontWeight="Normal"
+                               Foreground="#808080" Margin="6,4,0,0"
+                               IsHitTestVisible="False"
+                               Visibility="Visible"/>
+                </Grid>
+            </Border>
         </GroupBox>
 
-        <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" VerticalAlignment="Center" ShowsPreview="True"/>
+        <!-- ── Resize splitter ── -->
+        <GridSplitter Grid.Row="5" Margin="8,2" Height="6"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Center"
+                      ShowsPreview="True" Background="#C0C0C0"
+                      ToolTip="Drag to resize the input and output panels"
+                      AutomationProperties.Name="Panel Resize Splitter"/>
 
-        <GroupBox Header="Output" Grid.Row="3">
-            <TextBox x:Name="TxtOutput" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" FontFamily="Consolas" IsReadOnly="True"/>
+        <!-- ── Output panel: sunken inset text area (read-only) ── -->
+        <GroupBox Header="Output" Grid.Row="6" Margin="8,0,8,2">
+            <Border Style="{StaticResource SunkenBorder}">
+                <TextBox x:Name="TxtOutput"
+                         AcceptsReturn="True"
+                         VerticalScrollBarVisibility="Auto"
+                         TextWrapping="Wrap"
+                         FontFamily="Consolas, Courier New"
+                         FontWeight="Normal"
+                         FontSize="13"
+                         IsReadOnly="True"
+                         Background="#FFFFFF"
+                         BorderThickness="0"
+                         AutomationProperties.Name="Formatted Output"
+                         AutomationProperties.HelpText="Displays the sorted and formatted CIDR results. This field is read-only."/>
+            </Border>
         </GroupBox>
+
+        <!-- ── Sunken status bar at bottom (like classic Win95 apps) ── -->
+        <Border Grid.Row="7" Margin="2,2,2,2" Padding="6,3"
+                BorderThickness="2" BorderBrush="#808080" Background="#C0C0C0">
+            <Border BorderThickness="0,0,1,1" BorderBrush="#FFFFFF">
+                <TextBlock x:Name="TxtStatusBar"
+                           FontFamily="MS Sans Serif, Arial" FontSize="11"
+                           Foreground="#404040"
+                           Text="Ready"/>
+            </Border>
+        </Border>
     </Grid>
 </Window>
